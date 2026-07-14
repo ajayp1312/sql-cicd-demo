@@ -5,3 +5,4 @@ CREATE TABLE IF NOT EXISTS employees (
     department VARCHAR(100),
     created_at TIMESTAMP DEFAULT NOW()
 );
+ALTER TABLE employees ADD COLUMN IF NOT EXISTS email VARCHAR(150);
