@@ -34,4 +34,4 @@ jobs:
           PGPASSWORD: ${{ env.DB_PASSWORD }}
         run: |
           Write-Host "Deploying to $env:TARGET_ENV ($env:DB_NAME)"
-          & "C:\Program Files\PostgreSQL\16\bin\psql.exe" -h localhost -U $env:DB_USER -d $env:DB_NAME -f sql/changes.sql
+          & "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h localhost -U $env:DB_USER -d $env:DB_NAME -f sql/changes.sql
