@@ -29,7 +29,7 @@ jobs:
           }
 
       - name: Run SQL file against target database
-        shell: pwsh
+        shell: powershell
         env:
           PGPASSWORD: ${{ env.DB_PASSWORD }}
         run: |
