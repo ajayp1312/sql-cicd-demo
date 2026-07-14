@@ -1,0 +1,37 @@
+name: Deploy SQL Changes
+
+on:
+  push:
+    branches: [qa, main]
+    paths:
+      - 'sql/**.sql'
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine target environment
+        shell: pwsh
+        run: |
+          if ("${{ github.ref }}" -eq "refs/heads/main") {
+            echo "DB_NAME=${{ secrets.PROD_DB_NAME }}" >> $env:GITHUB_ENV
+            echo "DB_USER=app_prod" >> $env:GITHUB_ENV
+            echo "DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }}" >> $env:GITHUB_ENV
+            echo "TARGET_ENV=PROD" >> $env:GITHUB_ENV
+          } else {
+            echo "DB_NAME=${{ secrets.QA_DB_NAME }}" >> $env:GITHUB_ENV
+            echo "DB_USER=app_qa" >> $env:GITHUB_ENV
+            echo "DB_PASSWORD=${{ secrets.QA_DB_PASSWORD }}" >> $env:GITHUB_ENV
+            echo "TARGET_ENV=QA" >> $env:GITHUB_ENV
+          }
+
+      - name: Run SQL file against target database
+        shell: pwsh
+        env:
+          PGPASSWORD: ${{ env.DB_PASSWORD }}
+        run: |
+          Write-Host "Deploying to $env:TARGET_ENV ($env:DB_NAME)"
+          & "C:\Program Files\PostgreSQL\16\bin\psql.exe" -h localhost -U $env:DB_USER -d $env:DB_NAME -f sql/changes.sql
